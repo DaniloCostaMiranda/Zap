@@ -31,7 +31,11 @@ namespace Zap
             {
                 cfg.UseSqlite("Data Source=Database\\Zap.db");
             });
-            services.AddSignalR();
+
+            services.AddSignalR(cfg=> {
+                cfg.EnableDetailedErrors = true;
+
+            });
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
         }
 

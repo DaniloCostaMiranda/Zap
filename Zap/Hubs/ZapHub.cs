@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,8 +41,59 @@ namespace Zap.Hubs
             }
             else
             {
-                await Clients.Caller.SendAsync("ReceberLogin", true, usuarioDB, null);
+                await Clients.Caller.SendAsync("ReceberLogin", true, usuarioDB, "");
             }
+        }
+
+        public async Task AddConnectionIdDoUsuario(Usuario usuario)
+        {
+            var ConnectionIdCurrent = Context.ConnectionId;
+            List<string> connectionsId = null;
+
+            Usuario usuarioDB =_banco.Usuarios.Find(usuario.Id);
+            if (usuarioDB.ConnectionId == null)
+            {
+                connectionsId = new List<string>();
+                connectionsId.Add(ConnectionIdCurrent);
+            }
+
+            else
+            {
+
+                connectionsId = JsonConvert.DeserializeObject<List<string>>(usuarioDB.ConnectionId);
+
+                if (!connectionsId.Contains(ConnectionIdCurrent))
+                {
+                    connectionsId.Add(ConnectionIdCurrent);
+                }
+
+            }
+            usuarioDB.ConnectionId = JsonConvert.SerializeObject(connectionsId);
+            _banco.Usuarios.Update(usuarioDB);
+            _banco.SaveChanges();
+
+        }
+
+        public async Task DelConnectionIdDoUsuario(Usuario usuario)
+        {
+            Usuario usuarioDB = _banco.Usuarios.Find(usuario.Id);
+            if (usuarioDB.ConnectionId.Length > 0)
+            {
+                var ConnectionIdCurrent = Context.ConnectionId;
+                List<string> connectionsId = JsonConvert.DeserializeObject<List<string>>(usuarioDB.ConnectionId);
+
+                if (!connectionsId.Contains(ConnectionIdCurrent))
+                {
+                    connectionsId.Remove(ConnectionIdCurrent);
+                }
+                usuarioDB.ConnectionId = JsonConvert.SerializeObject(connectionsId);
+
+
+                _banco.Usuarios.Update(usuarioDB);
+                _banco.SaveChanges();
+            }
+
+
         }
     }
 
