@@ -34,9 +34,11 @@ namespace Zap
 
             services.AddSignalR(cfg=> {
                 cfg.EnableDetailedErrors = true;
+                cfg.MaximumReceiveMessageSize = null;
 
-            });
+            }).AddNewtonsoftJsonProtocol();
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -64,6 +66,7 @@ namespace Zap
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapHub<ZapHub>("/ZapHub");
             });
             app.UseSignalR(cfg =>
             {

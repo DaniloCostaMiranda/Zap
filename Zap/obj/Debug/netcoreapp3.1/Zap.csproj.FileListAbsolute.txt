@@ -165,7 +165,6 @@ C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\Micros
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.Components.Forms.dll
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.Components.Server.dll
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.Components.Web.dll
-C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.Connections.Abstractions.dll
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.CookiePolicy.dll
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.Cors.dll
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.Cryptography.Internal.dll
@@ -187,7 +186,6 @@ C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\Micros
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.Http.Connections.dll
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.Http.dll
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.Http.Extensions.dll
-C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.Http.Features.dll
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.HttpOverrides.dll
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.HttpsPolicy.dll
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.Identity.dll
@@ -222,7 +220,6 @@ C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\Micros
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.Server.Kestrel.dll
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.dll
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.Session.dll
-C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.SignalR.Common.dll
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.SignalR.Core.dll
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.SignalR.dll
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.SignalR.Protocols.Json.dll
@@ -317,7 +314,6 @@ C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\System
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\System.IO.FileSystem.Watcher.dll
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\System.IO.IsolatedStorage.dll
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\System.IO.MemoryMappedFiles.dll
-C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\System.IO.Pipelines.dll
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\System.IO.Pipes.dll
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\System.IO.UnmanagedMemoryStream.dll
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\System.Linq.dll
@@ -423,3 +419,8 @@ C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\refs\Window
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Mvc.Razor.Extensions.dll
 C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation.dll
 C:\Users\Meu Computador\source\repos\Zap\Zap\obj\Debug\netcoreapp3.1\Zap.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Connections.Abstractions.dll
+C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Http.Features.dll
+C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.SignalR.Common.dll
+C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson.dll
+C:\Users\Meu Computador\source\repos\Zap\Zap\bin\Debug\netcoreapp3.1\System.IO.Pipelines.dll

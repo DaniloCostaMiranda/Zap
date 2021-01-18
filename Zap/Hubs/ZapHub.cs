@@ -82,7 +82,7 @@ namespace Zap.Hubs
                 var ConnectionIdCurrent = Context.ConnectionId;
                 List<string> connectionsId = JsonConvert.DeserializeObject<List<string>>(usuarioDB.ConnectionId);
 
-                if (!connectionsId.Contains(ConnectionIdCurrent))
+                if (connectionsId.Contains(ConnectionIdCurrent))
                 {
                     connectionsId.Remove(ConnectionIdCurrent);
                 }
@@ -95,6 +95,13 @@ namespace Zap.Hubs
 
 
         }
+
+        public async Task ObterListaUsuarios()
+        {
+            var usuarios = _banco.Usuarios.ToList();
+            await Clients.Caller.SendAsync("ReceberListaUsuarios", usuarios);
+        }
+
     }
 
 }

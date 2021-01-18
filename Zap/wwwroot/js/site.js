@@ -1,4 +1,4 @@
-﻿var connection = new signalR.HubConnectionBuilder().withUrl("/ZapHub").build();
+﻿var connection = new signalR.HubConnectionBuilder().withUrl("/ZapHub").withAutomaticReconnect([0, 1000, 5000]).configureLogging(signalR.LogLevel.Information).build();
 function ConnectionStart() {
     connection.start().then(function () {
         HabilitarCadastro();
@@ -7,11 +7,11 @@ function ConnectionStart() {
         console.info("Connected!");
     }).catch(function (err) {
         console.error(err.toString());
-        setTimeout(ConnectionStart(), 5000)
+        
     });
 }
 
-connection.onclose(async () => { await ConnectionStart(); });
+
 function HabilitarCadastro() {
     var formCadastro = document.getElementById("form-cadastro");
     if (formCadastro != null) {
@@ -82,6 +82,24 @@ if (telaConversacao != null) {
 }
 
 function HabilitarConversacao() {
+
+    MonitorarConnectionID();
+    MonitorarListaUsuarios();
+}
+
+MonitorarListaUsuarios() {
+    connection.invoke("ObterListaUsuarios");
+
+    connection.on("ReceberListaUsuarios", function(usuarios) {
+        var html = "";
+        for (i = 0; i < usuarios.lenght; i++) {
+          html += '<div class="container-user-item">< img src = "/imagem/logonew.png" style = "width: 10%;" /><div><span>' + usuarios[i].nome +' (' + (usuarios[i].isOnline ? "online" : "offline") + ')</span><span class="email">' + usuarios[i].email + '</span></div></div >'
+        }
+        document.getElementById("users").innerHTML = html;
+    });
+}
+
+function MonitorarConnectionID() {
     var telaConversacao = document.getElementById("tela-conversacao");
     if (telaConversacao != null) {
         connection.invoke("AddConnectionIdDoUsuario", GetUsuarioLogado());
