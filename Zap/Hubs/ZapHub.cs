@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Zap.Database;
 using Zap.Models;
@@ -35,14 +36,33 @@ namespace Zap.Hubs
         public async Task Login(Usuario usuario)
         {
             var usuarioDB =_banco.Usuarios.FirstOrDefault(a => a.Email == usuario.Email && a.Senha == usuario.Senha);
-            if(usuarioDB == null)
+            if (usuarioDB == null)
             {
                 await Clients.Caller.SendAsync("ReceberLogin", false, false, "Email ou senha não cadastrados!");
             }
             else
             {
                 await Clients.Caller.SendAsync("ReceberLogin", true, usuarioDB, "");
+                usuarioDB.IsOnline = true;
+                _banco.Usuarios.Update(usuarioDB);
+                _banco.SaveChanges();
+
+
+                await NotificarMudancaNaListaUsuarios();
             }
+            
+        }
+
+        public async Task Logout(Usuario usuario)
+        {
+            var usuarioDB = _banco.Usuarios.Find(usuario.Id);
+            usuarioDB.IsOnline = false;
+            _banco.Usuarios.Update(usuarioDB);
+            _banco.SaveChanges();
+
+           await DelConnectionIdDoUsuario(usuarioDB);
+
+            await NotificarMudancaNaListaUsuarios();
         }
 
         public async Task AddConnectionIdDoUsuario(Usuario usuario)
@@ -68,19 +88,31 @@ namespace Zap.Hubs
                 }
 
             }
+            usuarioDB.IsOnline = true;
             usuarioDB.ConnectionId = JsonConvert.SerializeObject(connectionsId);
             _banco.Usuarios.Update(usuarioDB);
             _banco.SaveChanges();
+            await NotificarMudancaNaListaUsuarios();
 
+            //Adicionar connections Ids aos gupos do signal R
+
+            var grupos = _banco.Grupos.Where(a => a.Usuarios.Contains("usuarioDB.Email"));
+            foreach(var connectionId in connectionsId)
+            {
+                foreach (var grupo in grupos) {
+                    await Groups.AddToGroupAsync(connectionId, grupo.Nome);
+                }
+            }
         }
 
         public async Task DelConnectionIdDoUsuario(Usuario usuario)
         {
             Usuario usuarioDB = _banco.Usuarios.Find(usuario.Id);
+            List<string> connectionsId = null;
             if (usuarioDB.ConnectionId.Length > 0)
             {
                 var ConnectionIdCurrent = Context.ConnectionId;
-                List<string> connectionsId = JsonConvert.DeserializeObject<List<string>>(usuarioDB.ConnectionId);
+                connectionsId = JsonConvert.DeserializeObject<List<string>>(usuarioDB.ConnectionId);
 
                 if (connectionsId.Contains(ConnectionIdCurrent))
                 {
@@ -88,18 +120,117 @@ namespace Zap.Hubs
                 }
                 usuarioDB.ConnectionId = JsonConvert.SerializeObject(connectionsId);
 
-
+                if (connectionsId.Count <= 0)
+                {
+                    usuarioDB.IsOnline = false;
+                    await ObterListaUsuarios();
+                    
+                }
                 _banco.Usuarios.Update(usuarioDB);
                 _banco.SaveChanges();
+                await NotificarMudancaNaListaUsuarios();
+              
+                //Remover connectionid dos grupos de conversa desse usuario do 
+                var grupos = _banco.Grupos.Where(a => a.Usuarios.Contains("usuarioDB.Email"));
+                foreach (var connectionId in connectionsId)
+                {
+                    foreach (var grupo in grupos)
+                    {
+                        await Groups.RemoveFromGroupAsync(connectionId, grupo.Nome);
+                    }
+                }
+
+           
             }
-
-
+            
         }
 
         public async Task ObterListaUsuarios()
         {
             var usuarios = _banco.Usuarios.ToList();
             await Clients.Caller.SendAsync("ReceberListaUsuarios", usuarios);
+        }
+
+        public async Task NotificarMudancaNaListaUsuarios()
+        {
+            var usuarios = _banco.Usuarios.ToList();
+            await Clients.All.SendAsync("ReceberListaUsuarios", usuarios);
+        }
+
+        //SignalR - 
+        public async Task CriarOuAbrirGrupo(string emailUserUm, string emailUserDois)
+        {
+            string nomeGrupo = CriarNomeGrupo(emailUserUm, emailUserDois);
+
+            //TODO - verificar se grupo ja existe no banco, se não criar grupo.
+            Grupo grupo = _banco.Grupos.FirstOrDefault(a => a.Nome == nomeGrupo);
+            if (grupo == null)
+            {
+
+                grupo = new Grupo();
+                grupo.Nome = nomeGrupo;
+                grupo.Usuarios = JsonConvert.SerializeObject(new List<string>()
+                {
+                    emailUserUm,
+                    emailUserDois
+                });
+                _banco.Grupos.Add(grupo);
+                _banco.SaveChanges();
+            }
+            //Adicionou as connections Id para o grupo no Signal R
+
+            List<string> emails = JsonConvert.DeserializeObject<List<string>>(grupo.Usuarios);
+            List<Usuario> usuarios = new List<Usuario>() {
+            _banco.Usuarios.First(a => a.Email == emails [0]),
+            _banco.Usuarios.First(a => a.Email == emails [1])
+        };
+        foreach(var usuario in usuarios){
+           var connectionsId = JsonConvert.DeserializeObject<List<string>>(usuario.ConnectionId);
+                foreach(var connectionId in connectionsId)
+                {
+                   await Groups.AddToGroupAsync(connectionId, nomeGrupo);
+                }
+            }
+            var mensagens = _banco.Mensagens.Where(a => a.NomeGrupo == nomeGrupo).OrderBy(a=>a.DataCriacao).ToList();
+            for(int i=0; i < mensagens.Count; i++)
+            {
+               mensagens[i].Usuario = JsonConvert.DeserializeObject<Usuario>(mensagens[i].UsuarioJson);
+            }
+            await Clients.Caller.SendAsync("AbrirGrupo", nomeGrupo, mensagens);
+    }
+        public async Task EnviarMensagem(Usuario usuario, string msg, string nomeGrupo)
+        {
+            Grupo grupo = _banco.Grupos.FirstOrDefault(a => a.Nome == nomeGrupo);
+            if (!grupo.Usuarios.Contains(usuario.Email)){
+                throw new Exception("Usuario não pertence ao grupo !");
+            }
+
+            Mensagem mensagem = new Mensagem();
+            mensagem.NomeGrupo = nomeGrupo;
+            mensagem.Texto = msg;
+            mensagem.UsuarioId = usuario.Id;
+            mensagem.UsuarioJson = JsonConvert.SerializeObject(usuario);
+            mensagem.Usuario = usuario;
+            mensagem.DataCriacao = DateTime.Now;
+
+            _banco.Mensagens.Add(mensagem);
+            _banco.SaveChanges();
+
+            await Clients.Group(nomeGrupo).SendAsync("ReceberMensagem", mensagem, nomeGrupo);
+         
+        }
+
+        private string CriarNomeGrupo(string emailUserUm, string emailUserDois)
+        {
+            List<string> lista = new List<string>() { emailUserUm, emailUserDois };
+            var listaOrdenada = lista.OrderBy(a => a).ToList();
+
+            StringBuilder sb = new StringBuilder();
+            foreach(var item in listaOrdenada)
+            {
+                sb.Append(item);
+            }
+            return sb.ToString();
         }
 
     }

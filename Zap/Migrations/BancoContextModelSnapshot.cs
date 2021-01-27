@@ -39,7 +39,7 @@ namespace Zap.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime?>("DataCricao")
+                    b.Property<DateTime?>("DataCriacao")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("NomeGrupo")
@@ -48,7 +48,10 @@ namespace Zap.Migrations
                     b.Property<string>("Texto")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Usuario")
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UsuarioJson")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

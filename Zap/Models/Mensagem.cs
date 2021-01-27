@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -9,8 +10,12 @@ namespace Zap.Models
     {
         public int Id { get; set; }
         public string NomeGrupo { get; set; }
-        public string Usuario { get; set; }
+        public int UsuarioId { get; set; }
+        
+        public string UsuarioJson { get; set; }
+        [NotMapped]
+        public Usuario Usuario { get; set; }
         public string Texto { get; set; }
-        public DateTime? DataCricao { get; set; }
+        public DateTime? DataCriacao { get; set; }
     }
 }
