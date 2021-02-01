@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ZapApp.Login"
+             Background="#32A060"
+             xmlns:componente="clr-namespace:ZapApp.Componentes"
+             >
+    <ContentPage.Content>
+        <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Spacing="30">
+            <Image Source="logonew.png" Margin="0, 40" />
+            <Frame BackgroundColor="#267848" CornerRadius="30" Padding="10, 5">
+            <componente:ClearEntry  x:Name="Email" Placeholder="E-mail" PlaceholderColor="White" TextColor="White"  HorizontalOptions="Center" WidthRequest="250"  />
+            </Frame>
+            <Frame BackgroundColor="#267848" CornerRadius="30" Padding="10, 5">
+            <componente:ClearEntry x:Name="Senha" Placeholder="Senha" PlaceholderColor="White" TextColor="White" HorizontalOptions="Center" WidthRequest="250"  />
+            </Frame>
+            <Button x:Name="Acessar" Text="Acessar" CornerRadius="50" TextColor="White" BackgroundColor="#267848" HorizontalOptions="Center" WidthRequest="150" />
+            <Label x:Name="Mensagem" Text="Avisos" TextColor="Red" HorizontalTextAlignment="Center" />
+            <Label  TextColor="White" HorizontalTextAlignment="Center"
+                VerticalOptions="CenterAndExpand" 
+                HorizontalOptions="CenterAndExpand" >
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="Clique aqui e " />
+                        <Span Text="cadastre-se!" TextColor="Aquamarine" TextDecorations="Underline">
+                        <Span.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped" />
+                        </Span.GestureRecognizers>
+                        </Span>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

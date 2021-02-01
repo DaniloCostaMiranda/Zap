@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ZapApp.ListagemMensagens"
+             xmlns:componente="clr-namespace:ZapApp.Componentes"
+             Background="#F0F0F0"
+             xmlns:viewModel="clr-namespace:ZapApp"
+             xmlns:dataTemplate="clr-namespace:ZapApp"
+             Title="Aline"
+             >
+    <ContentPage.BindingContext>
+        <viewModel:ListagemMensagensViewModel />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <DataTemplate x:Key="esquerdaTemplate">
+                <ViewCell>
+                    <Grid BackgroundColor="#F0F0F0" Padding="7">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Frame Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" HasShadow="True" CornerRadius="20" >
+                            <StackLayout>
+                                <StackLayout Orientation="Horizontal">
+                                    <Image WidthRequest="25" Source="logonew.png"/>
+                                    <Label Text="{Binding Usuario.Nome}" TextColor="Black" />
+                                </StackLayout>
+                                <Label Text="{Binding Texto}" TextColor="#8C8C8C" />
+                            </StackLayout>
+                        </Frame>
+                    </Grid>
+                </ViewCell>
+            </DataTemplate>
+            <DataTemplate x:Key="direitaTemplate">
+                <ViewCell>
+                    <Grid Padding="7" Background="#F0F0F0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Frame Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" HasShadow="True" CornerRadius="20" >
+                            <StackLayout>
+                                <StackLayout Orientation="Horizontal" HorizontalOptions="End">
+                                   <Label Text="{Binding Usuario.Nome}" TextColor="Black" />
+                                   <Image WidthRequest="25" Source="logonew.png"/>
+                                </StackLayout>
+                                <Label Text="{Binding Texto}" HorizontalTextAlignment="End" TextColor="#8C8C8C" />
+                            </StackLayout>
+                        </Frame>
+                    </Grid>
+                </ViewCell>
+            </DataTemplate>
+            <dataTemplate:MensagemDataTemplateSelector x:Key="mensagemDataTemplateSelector"
+                EsquerdaTemplate="{StaticResource esquerdaTemplate}"
+                DireitaTemplate="{StaticResource direitaTemplate}" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <ContentPage.Content>
+        <StackLayout>
+            <ListView SeparatorVisibility="None" ItemsSource="{Binding Mensagens}" HasUnevenRows="True" ItemTemplate="{StaticResource mensagemDataTemplateSelector}" />
+
+            <Grid VerticalOptions="End" Padding="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="85*" />
+                    <ColumnDefinition Width="15*" />
+                </Grid.ColumnDefinitions>
+                <Frame Grid.Row="0" Grid.Column="0" BackgroundColor="#32A060" CornerRadius="30" Padding="10, 5" >
+                    <componente:ClearEntry Placeholder="Mensagem" PlaceholderColor="White" TextColor="White" HorizontalOptions="StartAndExpand" WidthRequest="250"  />
+                </Frame>
+                <Button Grid.Row="0" Grid.Column="1" WidthRequest="60" CornerRadius="50" TextColor="White" BackgroundColor="#32A060" HorizontalOptions="Center" ImageSource="send.png" />
+            </Grid>
+        </StackLayout>
+
+
+    </ContentPage.Content>
+</ContentPage>

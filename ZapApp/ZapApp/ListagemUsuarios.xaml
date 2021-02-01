@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ZapApp.ListagemUsuarios"
+             xmlns:viewmodel="clr-namespace:ZapApp"
+             
+             Background="#32A060">
+    <ContentPage.BindingContext>
+        <viewmodel:ListagemUsuariosViewModel />
+    </ContentPage.BindingContext>
+    <ContentPage.Content>
+        <ListView ItemsSource="{Binding Usuarios}" HasUnevenRows="True">
+            <ListView.Header>
+            <Image Source="logonew.png" Margin="0, 40" />
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid Padding="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Image Source="icon.png" Grid.Row="0" Grid.Column="0"/>
+                            <StackLayout Grid.Row="0" Grid.Column="1">
+                                <Label Text="Aline (Online)" TextColor="White"/>
+                                <Label Text="Aline@gmail.com)"  TextColor="#D8CFCF" />
+                            </StackLayout>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        
+    </ContentPage.Content>
+</ContentPage>
