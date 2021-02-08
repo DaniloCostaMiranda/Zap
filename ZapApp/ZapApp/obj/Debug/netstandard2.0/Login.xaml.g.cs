@@ -29,12 +29,16 @@ namespace ZapApp {
         private global::Xamarin.Forms.Label Mensagem;
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Xamarin.Forms.Build.Tasks.XamlG", "2.0.0.0")]
+        private global::Xamarin.Forms.ActivityIndicator Processando;
+        
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Xamarin.Forms.Build.Tasks.XamlG", "2.0.0.0")]
         private void InitializeComponent() {
             global::Xamarin.Forms.Xaml.Extensions.LoadFromXaml(this, typeof(Login));
             Email = global::Xamarin.Forms.NameScopeExtensions.FindByName<global::ZapApp.Componentes.ClearEntry>(this, "Email");
             Senha = global::Xamarin.Forms.NameScopeExtensions.FindByName<global::ZapApp.Componentes.ClearEntry>(this, "Senha");
             Acessar = global::Xamarin.Forms.NameScopeExtensions.FindByName<global::Xamarin.Forms.Button>(this, "Acessar");
             Mensagem = global::Xamarin.Forms.NameScopeExtensions.FindByName<global::Xamarin.Forms.Label>(this, "Mensagem");
+            Processando = global::Xamarin.Forms.NameScopeExtensions.FindByName<global::Xamarin.Forms.ActivityIndicator>(this, "Processando");
         }
     }
 }

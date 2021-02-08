@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using ZapApp.Models;
+using ZapApp.Services;
 
 namespace ZapApp
 {
@@ -16,30 +16,53 @@ namespace ZapApp
         public ListagemUsuarios()
         {
             InitializeComponent();
+
+            Sair.Clicked += async (sender, args) =>
+            {
+                //SignalR
+                await ZapWebService.GetInstance().Sair(UsuarioManager.GetUsuarioLogado());
+                //App
+                UsuarioManager.DelUsuarioLogado();
+                App.Current.MainPage = new Inicio();
+            };
+
+            Listagem.ItemTapped += (sender, args) =>
+            {
+                Usuario usuario = (Usuario)args.Item;
+                var listagemMensagens = new ListagemMensagens();
+                listagemMensagens.SetUsuario(usuario);
+                Navigation.PushAsync(listagemMensagens);
+            };
+
+            Task.Run(async() => { await ZapWebService.GetInstance().ObterListaUsuarios();});
+
+        }
+
+
+    }
+
+    public class ListagemUsuariosViewModel : INotifyPropertyChanged 
+    {
+        private List<Usuario> _usuarios;
+        public List<Usuario> Usuarios { get {
+                return _usuarios;
+            }
+            set {
+                _usuarios = value;
+                NotifyPropertyChanged(nameof(Usuarios));
+            }
+        }
+        public ListagemUsuariosViewModel()
+        {
             
         }
 
-        
-    }
+        public event PropertyChangedEventHandler PropertyChanged;
 
-    public class ListagemUsuariosViewModel
-    {
-        public List<Usuario> Usuarios { get; set; }
-        public ListagemUsuariosViewModel()
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
-            Usuarios = MockUsuarios();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private List<Usuario> MockUsuarios()
-        {
-            return new List<Usuario>(){
-                new Usuario { Nome = "Danilo", Email = "Danilo@hotmail.com", Senha = "123456", IsOnline = false },
-                new Usuario { Nome = "dan", Email = "dan@hotmail.com", Senha = "123456", IsOnline = false },
-                new Usuario { Nome = "Maria", Email = "Maria@hotmail.com", Senha = "123456", IsOnline = false },
-                new Usuario { Nome = "Gio", Email = "Gio@hotmail.com", Senha = "123456", IsOnline = false }
-
-        };
-
-        }
     }
 }

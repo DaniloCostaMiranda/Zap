@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Zap.Database;
 using Zap.Models;
 
+
+
 namespace Zap.Hubs
 {
     public class ZapHub : Hub
@@ -18,12 +20,23 @@ namespace Zap.Hubs
         {
             _banco = banco;
         }
+
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            var usuario = _banco.Usuarios.FirstOrDefault(a => a.ConnectionId.Contains(Context.ConnectionId));
+            if(usuario!= null)
+            {
+               await DelConnectionIdDoUsuario(usuario);
+            }
+            
+            await base.OnDisconnectedAsync(exception);
+        }
         public async Task Cadastrar(Usuario usuario)
         {
             bool IsExistUser = _banco.Usuarios.Where(a => a.Email == usuario.Email).Count() > 0;
             if (IsExistUser)
             {
-                await Clients.Caller.SendAsync("ReceberCadastro", false, false, "E-mail ja cadastrado");
+                await Clients.Caller.SendAsync("ReceberCadastro", false, null, "E-mail ja cadastrado");
             }
             else
             {
@@ -35,10 +48,10 @@ namespace Zap.Hubs
         }
         public async Task Login(Usuario usuario)
         {
-            var usuarioDB =_banco.Usuarios.FirstOrDefault(a => a.Email == usuario.Email && a.Senha == usuario.Senha);
+            var usuarioDB = _banco.Usuarios.FirstOrDefault(a => a.Email == usuario.Email && a.Senha == usuario.Senha);
             if (usuarioDB == null)
             {
-                await Clients.Caller.SendAsync("ReceberLogin", false, false, "Email ou senha não cadastrados!");
+                await Clients.Caller.SendAsync("ReceberLogin", false, new Usuario(), "Email ou senha não cadastrados!");
             }
             else
             {
@@ -50,7 +63,7 @@ namespace Zap.Hubs
 
                 await NotificarMudancaNaListaUsuarios();
             }
-            
+
         }
 
         public async Task Logout(Usuario usuario)
@@ -60,7 +73,7 @@ namespace Zap.Hubs
             _banco.Usuarios.Update(usuarioDB);
             _banco.SaveChanges();
 
-           await DelConnectionIdDoUsuario(usuarioDB);
+            await DelConnectionIdDoUsuario(usuarioDB);
 
             await NotificarMudancaNaListaUsuarios();
         }
@@ -70,7 +83,7 @@ namespace Zap.Hubs
             var ConnectionIdCurrent = Context.ConnectionId;
             List<string> connectionsId = null;
 
-            Usuario usuarioDB =_banco.Usuarios.Find(usuario.Id);
+            Usuario usuarioDB = _banco.Usuarios.Find(usuario.Id);
             if (usuarioDB.ConnectionId == null)
             {
                 connectionsId = new List<string>();
@@ -97,9 +110,10 @@ namespace Zap.Hubs
             //Adicionar connections Ids aos gupos do signal R
 
             var grupos = _banco.Grupos.Where(a => a.Usuarios.Contains("usuarioDB.Email"));
-            foreach(var connectionId in connectionsId)
+            foreach (var connectionId in connectionsId)
             {
-                foreach (var grupo in grupos) {
+                foreach (var grupo in grupos)
+                {
                     await Groups.AddToGroupAsync(connectionId, grupo.Nome);
                 }
             }
@@ -124,12 +138,12 @@ namespace Zap.Hubs
                 {
                     usuarioDB.IsOnline = false;
                     await ObterListaUsuarios();
-                    
+
                 }
                 _banco.Usuarios.Update(usuarioDB);
                 _banco.SaveChanges();
                 await NotificarMudancaNaListaUsuarios();
-              
+
                 //Remover connectionid dos grupos de conversa desse usuario do 
                 var grupos = _banco.Grupos.Where(a => a.Usuarios.Contains("usuarioDB.Email"));
                 foreach (var connectionId in connectionsId)
@@ -140,9 +154,9 @@ namespace Zap.Hubs
                     }
                 }
 
-           
+
             }
-            
+
         }
 
         public async Task ObterListaUsuarios()
@@ -184,24 +198,26 @@ namespace Zap.Hubs
             _banco.Usuarios.First(a => a.Email == emails [0]),
             _banco.Usuarios.First(a => a.Email == emails [1])
         };
-        foreach(var usuario in usuarios){
-           var connectionsId = JsonConvert.DeserializeObject<List<string>>(usuario.ConnectionId);
-                foreach(var connectionId in connectionsId)
+            foreach (var usuario in usuarios)
+            {
+                var connectionsId = JsonConvert.DeserializeObject<List<string>>(usuario.ConnectionId);
+                foreach (var connectionId in connectionsId)
                 {
-                   await Groups.AddToGroupAsync(connectionId, nomeGrupo);
+                    await Groups.AddToGroupAsync(connectionId, nomeGrupo);
                 }
             }
-            var mensagens = _banco.Mensagens.Where(a => a.NomeGrupo == nomeGrupo).OrderBy(a=>a.DataCriacao).ToList();
-            for(int i=0; i < mensagens.Count; i++)
+            var mensagens = _banco.Mensagens.Where(a => a.NomeGrupo == nomeGrupo).OrderBy(a => a.DataCriacao).ToList();
+            for (int i = 0; i < mensagens.Count; i++)
             {
-               mensagens[i].Usuario = JsonConvert.DeserializeObject<Usuario>(mensagens[i].UsuarioJson);
+                mensagens[i].Usuario = JsonConvert.DeserializeObject<Usuario>(mensagens[i].UsuarioJson);
             }
             await Clients.Caller.SendAsync("AbrirGrupo", nomeGrupo, mensagens);
-    }
+        }
         public async Task EnviarMensagem(Usuario usuario, string msg, string nomeGrupo)
         {
             Grupo grupo = _banco.Grupos.FirstOrDefault(a => a.Nome == nomeGrupo);
-            if (!grupo.Usuarios.Contains(usuario.Email)){
+            if (!grupo.Usuarios.Contains(usuario.Email))
+            {
                 throw new Exception("Usuario não pertence ao grupo !");
             }
 
@@ -217,7 +233,7 @@ namespace Zap.Hubs
             _banco.SaveChanges();
 
             await Clients.Group(nomeGrupo).SendAsync("ReceberMensagem", mensagem, nomeGrupo);
-         
+
         }
 
         private string CriarNomeGrupo(string emailUserUm, string emailUserDois)
@@ -226,7 +242,7 @@ namespace Zap.Hubs
             var listaOrdenada = lista.OrderBy(a => a).ToList();
 
             StringBuilder sb = new StringBuilder();
-            foreach(var item in listaOrdenada)
+            foreach (var item in listaOrdenada)
             {
                 sb.Append(item);
             }

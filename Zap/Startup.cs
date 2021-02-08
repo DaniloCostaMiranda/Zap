@@ -1,14 +1,9 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Zap.Database;
 using Zap.Hubs;
 
@@ -32,7 +27,8 @@ namespace Zap
                 cfg.UseSqlite("Data Source=Database\\Zap.db");
             });
 
-            services.AddSignalR(cfg=> {
+            services.AddSignalR(cfg =>
+            {
                 cfg.EnableDetailedErrors = true;
                 cfg.MaximumReceiveMessageSize = null;
 

@@ -1,5 +1,3 @@
-using System;
-
 namespace Zap.Models
 {
     public class ErrorViewModel

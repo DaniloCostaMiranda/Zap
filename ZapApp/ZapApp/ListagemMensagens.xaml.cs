@@ -1,46 +1,86 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using ZapApp.Models;
+using ZapApp.Services;
 
 namespace ZapApp
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ListagemMensagens : ContentPage
     {
+        private string _nomeGrupo { get; set; }
+        private Usuario _usuario { get; set; }
         public ListagemMensagens()
         {
             InitializeComponent();
+            Enviar.Clicked += async (sender, args) =>
+            {
+                var mensagem = Mensagem.Text.Trim();
+                if(mensagem.Length > 0)
+                {
+                    await ZapWebService.GetInstance().EnviarMensagem(UsuarioManager.GetUsuarioLogado(), mensagem, _nomeGrupo);
+                    Mensagem.Text = string.Empty;
+                }
+                else
+                {
+                   await DisplayAlert("Erro no preenchimento!", "Preencha o campo mensagem!", "OK");
+                }
+            };
+        }
+
+        public void SetUsuario(Usuario usuario)
+        {
+            _usuario = usuario;
+            Title = usuario.Nome.FirstCharWordsUpper();
+            var emailUm = UsuarioManager.GetUsuarioLogado().Email;
+            var emailDois = usuario.Email;
+            Task.Run(async()=> { await ZapWebService.GetInstance().CriarOuAbrirGrupo(emailUm, emailDois); });
+        }
+
+        public void SetScrollOnBottom()
+        {
+           var ultimoItemDaLista = Listagem.ItemsSource.Cast<object>().LastOrDefault();
+            Listagem.ScrollTo(ultimoItemDaLista, ScrollToPosition.MakeVisible, true);
+        }
+
+        public void SetNomeGrupo(string nomeGrupo)
+        {
+            _nomeGrupo = nomeGrupo;
+        }
+
+        public string GetNomeGrupo()
+        {
+            return _nomeGrupo;
         }
     }
-    public class ListagemMensagensViewModel
+    public class ListagemMensagensViewModel : INotifyPropertyChanged
     {
-        public List<Mensagem> Mensagens { get; set; }
-        public ListagemMensagensViewModel()
+        private ObservableCollection<Mensagem> _mensagens;
+        public ObservableCollection<Mensagem> Mensagens
         {
-            Mensagens = MockMensagens();
+            get
+            {
+                return _mensagens;
+            }
+            set
+            {
+                _mensagens = value;
+                NotifyPropertyChanged(nameof(Mensagens));
+            }
         }
-
-        private List<Mensagem> MockMensagens()
+       
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
-            return new List<Mensagem>(){
-                new Mensagem { NomeGrupo = "1", Texto = "America Verde1", Usuario = new Usuario{ Id = 1, Nome = "Elias Ribeiro" } },
-                new Mensagem { NomeGrupo = "1", Texto = "Palmeiras2", Usuario = new Usuario{ Id = 2, Nome = "Danilo M" } },
-                new Mensagem { NomeGrupo = "1", Texto = "America Verde3", Usuario = new Usuario{ Id = 1, Nome = "Elias Ribeiro" } },
-                new Mensagem { NomeGrupo = "1", Texto = "America Verde4", Usuario = new Usuario{ Id = 2, Nome = "Danilo M" } },
-                new Mensagem { NomeGrupo = "1", Texto = "America Verde5", Usuario = new Usuario{ Id = 1, Nome = "Elias Ribeiro" } },
-                new Mensagem { NomeGrupo = "1", Texto = "America Verde6", Usuario = new Usuario{ Id = 2, Nome = "Danilo M" } },
-                new Mensagem { NomeGrupo = "1", Texto = "America Verde7", Usuario = new Usuario{ Id = 2, Nome = "Danilo M" } },
-                new Mensagem { NomeGrupo = "1", Texto = "America Verde8", Usuario = new Usuario{ Id = 2, Nome = "Danilo M" } },
-                new Mensagem { NomeGrupo = "1", Texto = "America Verde9", Usuario = new Usuario{ Id = 2, Nome = "Danilo M" } },
-             
-                        };
-
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 

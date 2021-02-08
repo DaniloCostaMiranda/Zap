@@ -15,7 +15,8 @@
             <componente:ClearEntry x:Name="Senha" Placeholder="Senha" PlaceholderColor="White" TextColor="White" HorizontalOptions="Center" WidthRequest="250"  />
             </Frame>
             <Button x:Name="Acessar" Text="Acessar" CornerRadius="50" TextColor="White" BackgroundColor="#267848" HorizontalOptions="Center" WidthRequest="150" />
-            <Label x:Name="Mensagem" Text="Avisos" TextColor="Red" HorizontalTextAlignment="Center" />
+            <Label x:Name="Mensagem" TextColor="Red" HorizontalTextAlignment="Center" />
+            <ActivityIndicator x:Name="Processando" />
             <Label  TextColor="White" HorizontalTextAlignment="Center"
                 VerticalOptions="CenterAndExpand" 
                 HorizontalOptions="CenterAndExpand" >
